@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ORGANIZER
+  SECURITY
+  ATTENDEE
+  ADMIN
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  COMPLETED
+  CANCELLED
+}
+
+enum VehicleType {
+  CAR
+  BIKE
+  SUV
+  VAN
+  BUS
+}
+
+enum ParkingZoneType {
+  VIP
+  GENERAL
+  STAFF
+  DISABLED
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  CHECKED_IN
+}
+
+enum CheckInStatus {
+  SUCCESS
+  DENIED
+  DUPLICATE
+}
+
+model User {
+  id               String         @id @default(cuid())
+  name             String
+  email            String         @unique
+  emailVerified    DateTime?
+  image            String?
+  passwordHash     String
+  role             UserRole       @default(ATTENDEE)
+  phone            String?  
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+
+  organizedEvents  Event[]        @relation("OrganizerEvents")
+  venuesOwned      Venue[]        @relation("OrganizerVenues")
+  reservations     Reservation[]
+  scannedCheckIns  CheckInLog[]   @relation("ScannedBy")
+  checkInsPerformed Reservation[] @relation("CheckedInBy")
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Venue {
+  id            String         @id @default(cuid())
+  name          String
+  address       String
+  city          String
+  state         String?
+  pincode       String?
+  organizerId   String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  organizer     User           @relation("OrganizerVenues", fields: [organizerId], references: [id], onDelete: Cascade)
+  events        Event[]
+  parkingZones  ParkingZone[]
+
+  @@index([organizerId])
+}
+
+model Event {
+  id                String              @id @default(cuid())
+  title             String
+  description       String?
+  eventDate         DateTime
+  status            EventStatus         @default(DRAFT)
+  organizerId       String
+  venueId           String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  organizer         User                @relation("OrganizerEvents", fields: [organizerId], references: [id], onDelete: Cascade)
+  venue             Venue               @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  arrivalSlots      ArrivalSlot[]
+  reservations      Reservation[]
+  eventParkingZones EventParkingZone[]
+  auditLogs         AuditLog[]
+
+  @@index([organizerId])
+  @@index([venueId])
+  @@index([eventDate])
+}
+
+model ParkingZone {
+  id               String              @id @default(cuid())
+  name             String
+  type             ParkingZoneType
+  capacity         Int
+  venueId          String
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  venue            Venue               @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  eventMappings    EventParkingZone[]
+  reservations     Reservation[]
+
+  @@index([venueId])
+}
+
+model EventParkingZone {
+  id         String       @id @default(cuid())
+  eventId    String
+  zoneId     String
+
+  event      Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  zone       ParkingZone  @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, zoneId])
+  @@index([eventId])
+  @@index([zoneId])
+}
+
+model ArrivalSlot {
+  id          String         @id @default(cuid())
+  eventId     String
+  slotTime    DateTime
+  maxEntries  Int
+  createdAt   DateTime       @default(now())
+
+  event       Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+
+  @@index([eventId])
+  @@index([slotTime])
+}
+
+model Reservation {
+  id             String             @id @default(cuid())
+  code           String             @unique
+  userId         String
+  eventId        String
+  parkingZoneId  String?
+  slotId         String?
+  vehicleNumber  String
+  vehicleType    VehicleType
+  status         ReservationStatus  @default(PENDING)
+  checkedInAt    DateTime?
+  checkedInById  String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event          Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  parkingZone    ParkingZone?       @relation(fields: [parkingZoneId], references: [id], onDelete: SetNull)
+  slot           ArrivalSlot?       @relation(fields: [slotId], references: [id], onDelete: SetNull)
+  checkedInBy    User?              @relation("CheckedInBy", fields: [checkedInById], references: [id], onDelete: SetNull)
+  qrPass         QRPass?
+  checkInLogs    CheckInLog[]
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([parkingZoneId])
+  @@index([slotId])
+  @@index([status])
+  @@index([checkedInById])
+}
+
+model QRPass {
+  id             String        @id @default(cuid())
+  reservationId  String        @unique
+  qrToken        String        @unique
+  issuedAt       DateTime      @default(now())
+
+  reservation    Reservation   @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+}
+
+model CheckInLog {
+  id             String         @id @default(cuid())
+  reservationId  String
+  scannedBy      String
+  status         CheckInStatus
+  createdAt      DateTime       @default(now())
+
+  reservation    Reservation    @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  scanner        User           @relation("ScannedBy", fields: [scannedBy], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@index([scannedBy])
+  @@index([createdAt])
+}
+
+model Notification {
+  id          String       @id @default(cuid())
+  userId      String
+  title       String
+  message     String
+  isRead      Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model AuditLog {
+  id           String      @id @default(cuid())
+  userId       String?
+  eventId      String?
+  action       String
+  resourceType String
+  resourceId   String
+  meta         Json?
+  createdAt    DateTime    @default(now())
+
+  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  event        Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([resourceType, resourceId])
+  @@index([createdAt])
+}
