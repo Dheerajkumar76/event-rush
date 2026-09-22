@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Event Rush
 
-## Getting Started
+### Smart Event Parking & QR-Based Entry Management Platform
 
-First, run the development server:
+Event Rush is a full-stack web application designed to simplify parking management and entry verification for large events.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+It allows attendees to reserve parking spaces and arrival slots before reaching an event, receive a secure QR pass, and use that pass for quick entry verification.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Organizers can manage events, venues, parking zones, arrival slots, and reservations, while security teams can verify QR passes at event entrances.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Live Demo
 
-## Learn More
+**Live Application:**  
+https://event-rush-two.vercel.app
 
-To learn more about Next.js, take a look at the following resources:
+**GitHub Repository:**  
+https://github.com/Dheerajkumar76/event-rush
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📌 Features
 
-## Deploy on Vercel
+### 👤 Attendee
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Create an attendee account
+- Browse available events
+- Reserve event parking
+- Select parking zones
+- Select arrival slots
+- View active and past reservations
+- View parking pass
+- Generate and display QR code
+- Cancel reservations
+- Prevent duplicate active reservations
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 🏢 Organizer
+
+- Create and manage events
+- Manage event venues
+- Configure parking zones
+- Configure arrival slots
+- View event reservations
+- Monitor reservation statistics
+- Publish and cancel events
+- Manage event parking capacity
+
+### 🛡️ Security
+
+- Dedicated security login
+- QR-based reservation verification
+- Manual QR token entry
+- Validate reservation status
+- Prevent duplicate check-ins
+- Record check-in time
+- Record the security user who performed the check-in
+- Maintain check-in audit logs
+
+### 👑 Admin
+
+- Admin dashboard
+- Create users with different roles
+- Manage users
+- View events
+- View reservations
+- View check-in records
+- Role-based access control
+
+---
+
+## 🔄 How It Works
+
+```text
+                    EVENT RUSH
+                        │
+                        ▼
+                ┌───────────────┐
+                │ Select Event  │
+                └───────┬───────┘
+                        │
+                        ▼
+              ┌───────────────────┐
+              │ Select Parking    │
+              │ Zone & Arrival    │
+              │ Slot              │
+              └─────────┬─────────┘
+                        │
+                        ▼
+                ┌───────────────┐
+                │ Reservation   │
+                │ Created       │
+                └───────┬───────┘
+                        │
+                        ▼
+                ┌───────────────┐
+                │ QR Parking    │
+                │ Pass          │
+                └───────┬───────┘
+                        │
+                        ▼
+                ┌───────────────┐
+                │ Event Entry   │
+                │ QR Scan       │
+                └───────┬───────┘
+                        │
+                        ▼
+                ┌───────────────┐
+                │ Check-In      │
+                │ Recorded      │
+                └───────────────┘
