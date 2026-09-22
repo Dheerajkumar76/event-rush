@@ -9,7 +9,7 @@ export default async function HomePage() {
   return (
     <main style={styles.page}>
       {/* NAVBAR */}
-      <nav style={styles.navbar}>
+      <nav style={styles.navbar} className="siteNavbar">
         <Link href="/" style={styles.logo}>
           <span style={styles.logoBox}>P</span>
           <span>
@@ -17,7 +17,7 @@ export default async function HomePage() {
           </span>
         </Link>
 
-        <div style={styles.navLinks}>
+        <div style={styles.navLinks} className="desktopNavLinks">
           <a href="#home" style={styles.navLink}>
             Home
           </a>
@@ -31,7 +31,7 @@ export default async function HomePage() {
           </a>
         </div>
 
-        <div style={styles.navActions}>
+        <div style={styles.navActions} className="desktopNavActions">
   {!session?.user ? (
     <>
       <Link href="/login" style={styles.loginButton}>
@@ -56,31 +56,52 @@ export default async function HomePage() {
     </>
   )}
 </div>
+
+        <details className="mobileMenu">
+          <summary aria-label="Open navigation menu">☰</summary>
+          <div className="mobileMenuPanel">
+            <a href="#home">Home</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#features">Features</a>
+            {!session?.user ? (
+              <>
+                <Link href="/login">Login</Link>
+                <Link href="/reserve">Get Started</Link>
+              </>
+            ) : (
+              <>
+                <Link href="/my-reservations">My Reservations</Link>
+                <Link href="/reserve">Reserve</Link>
+                <LogoutButton />
+              </>
+            )}
+          </div>
+        </details>
       </nav>
 
       {/* HERO */}
-      <section id="home" style={styles.hero}>
-        <div style={styles.heroImage} />
-        <div style={styles.heroOverlay} />
+      <section id="home" style={styles.hero} className="heroSection">
+        <div style={styles.heroImage} className="heroImageLayer" />
+        <div style={styles.heroOverlay} className="heroOverlayLayer" />
 
-        <div style={styles.heroContent}>
-          <div style={styles.badge}>
+        <div style={styles.heroContent} className="heroContentBlock">
+          <div style={styles.badge} className="heroBadge">
             🚗 SMART PARKING FOR BIGGER EXPERIENCES
           </div>
 
-          <h1 style={styles.heroTitle}>
+          <h1 style={styles.heroTitle} className="heroTitleText">
             Park Smart.
             <br />
             <span style={styles.blueText}>Enjoy More.</span>
           </h1>
 
-          <p style={styles.heroDescription}>
+          <p style={styles.heroDescription} className="heroDescriptionText">
             Event Rush makes event parking simple, secure, and stress-free.
             Reserve your parking spot, get your QR pass, and enter your event
             with confidence.
           </p>
 
-          <div style={styles.heroButtons}>
+          <div style={styles.heroButtons} className="heroButtonsRow">
             <Link href="/reserve" style={styles.heroPrimaryButton}>
               Get Started →
             </Link>
@@ -90,7 +111,7 @@ export default async function HomePage() {
             </a>
           </div>
 
-          <div style={styles.heroFeatures}>
+          <div style={styles.heroFeatures} className="heroFeaturesRow">
             <div>
               <strong style={styles.featureNumber}>01</strong>
               <span>Choose an Event</span>
@@ -138,7 +159,7 @@ export default async function HomePage() {
           </h2>
         </div>
 
-        <div style={styles.steps}>
+        <div style={styles.steps} className="stepsGrid">
           <div style={styles.stepCard}>
             <div style={styles.stepNumber}>01</div>
             <div style={styles.stepIcon}>📅</div>
@@ -198,7 +219,7 @@ export default async function HomePage() {
           </h2>
         </div>
 
-        <div style={styles.featureGrid}>
+        <div style={styles.featureGrid} className="featureCardsGrid">
           <div style={styles.largeFeatureCard}>
             <div style={styles.featureIcon}>🎟️</div>
 
@@ -267,7 +288,7 @@ export default async function HomePage() {
       </section>
 
       {/* FOOTER */}
-      <footer style={styles.footer}>
+      <footer style={styles.footer} className="siteFooter">
         <div>
           <div style={styles.footerLogo}>
             Event <span style={styles.logoBlue}>Rush</span>
@@ -282,6 +303,253 @@ export default async function HomePage() {
           © 2026 Event Rush. All rights reserved.
         </p>
       </footer>
+
+      <style>{`
+        .mobileMenu {
+          display: none;
+          position: relative;
+        }
+
+        .mobileMenu summary {
+          list-style: none;
+          width: 42px;
+          height: 42px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid rgba(255,255,255,0.18);
+          border-radius: 10px;
+          color: #ffffff;
+          background: rgba(255,255,255,0.04);
+          font-size: 22px;
+          cursor: pointer;
+        }
+
+        .mobileMenu summary::-webkit-details-marker {
+          display: none;
+        }
+
+        .mobileMenuPanel {
+          position: absolute;
+          top: 52px;
+          right: 0;
+          width: min(260px, calc(100vw - 32px));
+          padding: 10px;
+          display: grid;
+          gap: 4px;
+          background: #0a1422;
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 14px;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        .mobileMenuPanel a,
+        .mobileMenuPanel button {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 12px 14px;
+          border: 0;
+          border-radius: 9px;
+          background: transparent;
+          color: #d9e2ee;
+          text-decoration: none;
+          text-align: left;
+          font: inherit;
+          cursor: pointer;
+        }
+
+        .mobileMenuPanel a:hover,
+        .mobileMenuPanel button:hover {
+          background: rgba(40,169,255,0.1);
+          color: #ffffff;
+        }
+
+        @media (max-width: 900px) {
+          .desktopNavLinks {
+            display: none !important;
+          }
+
+          .desktopNavActions {
+            display: none !important;
+          }
+
+          .mobileMenu {
+            display: block;
+          }
+
+          .siteNavbar {
+            height: 68px !important;
+            padding: 0 20px !important;
+            gap: 12px !important;
+          }
+
+          .heroSection {
+            min-height: 820px !important;
+            align-items: flex-start !important;
+          }
+
+          .heroImageLayer {
+            top: auto !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 38% !important;
+            border-radius: 24px 24px 0 0 !important;
+            background-position: center !important;
+          }
+
+          .heroOverlayLayer {
+            background: linear-gradient(180deg, #050b14 0%, rgba(5,11,20,0.98) 42%, rgba(5,11,20,0.25) 78%, rgba(5,11,20,0.05) 100%) !important;
+          }
+
+          .heroContentBlock {
+            max-width: none !important;
+            box-sizing: border-box !important;
+            padding: 64px 20px 340px !important;
+          }
+
+          .heroBadge {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            font-size: 11px !important;
+            line-height: 1.45 !important;
+          }
+
+          .heroTitleText {
+            max-width: 100% !important;
+            font-size: clamp(42px, 12vw, 64px) !important;
+            letter-spacing: -2px !important;
+          }
+
+          .heroDescriptionText {
+            max-width: 100% !important;
+            margin-top: 22px !important;
+            font-size: 16px !important;
+            line-height: 1.65 !important;
+          }
+
+          .heroButtonsRow {
+            margin-top: 26px !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+
+          .heroButtonsRow a {
+            text-align: center !important;
+            box-sizing: border-box !important;
+          }
+
+          .heroFeaturesRow {
+            gap: 22px !important;
+            margin-top: 34px !important;
+          }
+
+          .heroFeaturesRow > div {
+            flex: 1 1 90px !important;
+          }
+
+          .stepsGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+
+          .featureCardsGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .siteNavbar {
+            padding: 0 16px !important;
+          }
+
+          .siteNavbar > a {
+            min-width: 0 !important;
+          }
+
+          .siteNavbar > a span:last-child {
+            font-size: 20px !important;
+          }
+
+          .heroSection {
+            min-height: 850px !important;
+          }
+
+          .heroContentBlock {
+            padding: 54px 20px 330px !important;
+          }
+
+          .heroBadge {
+            display: block !important;
+            width: 100% !important;
+            margin-bottom: 20px !important;
+            padding: 9px 12px !important;
+          }
+
+          .heroTitleText {
+            font-size: 48px !important;
+            line-height: 1.02 !important;
+          }
+
+          .heroFeaturesRow {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 10px !important;
+          }
+
+          .heroFeaturesRow span {
+            display: block !important;
+            font-size: 11px !important;
+            line-height: 1.35 !important;
+          }
+
+          .heroFeaturesRow .featureNumber {
+            font-size: 18px !important;
+          }
+
+          .intro {
+            padding: 80px 20px 65px !important;
+          }
+
+          .howSection {
+            padding: 55px 20px 80px !important;
+          }
+
+          .stepsGrid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .stepCard {
+            min-height: auto !important;
+            padding: 24px !important;
+          }
+
+          .featuresSection {
+            padding: 75px 20px !important;
+          }
+
+          .featureCardsGrid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .largeFeatureCard {
+            padding: 26px !important;
+          }
+
+          .ctaSection {
+            padding: 85px 20px !important;
+          }
+
+          .ctaTitle {
+            font-size: 44px !important;
+          }
+
+          .siteFooter {
+            padding: 32px 20px !important;
+            flex-direction: column !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }
