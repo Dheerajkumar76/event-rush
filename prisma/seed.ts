@@ -32,22 +32,16 @@ function qrToken(index: number) {
 }
 
 async function main() {
-  const passwordHash = await bcrypt.hash('demo123', 10);
+  const demoPassword = process.env.DEMO_PASSWORD;
 
-  await prisma.checkInLog.deleteMany();
-  await prisma.qRPass.deleteMany();
-  await prisma.reservation.deleteMany();
-  await prisma.arrivalSlot.deleteMany();
-  await prisma.eventParkingZone.deleteMany();
-  await prisma.auditLog.deleteMany();
-  await prisma.notification.deleteMany();
-  await prisma.event.deleteMany();
-  await prisma.parkingZone.deleteMany();
-  await prisma.venue.deleteMany();
-  await prisma.session.deleteMany();
-  await prisma.account.deleteMany();
-  await prisma.verificationToken.deleteMany();
-  await prisma.user.deleteMany();
+if (!demoPassword) {
+  throw new Error(
+    'DEMO_PASSWORD is not set in the environment.'
+  );
+}
+
+const passwordHash = await bcrypt.hash(demoPassword, 12);
+
 
   const users = await Promise.all([
     prisma.user.create({
@@ -199,11 +193,11 @@ async function main() {
   ]);
 
   const eventDates = [
-    new Date('2026-07-15T10:00:00.000Z'),
-    new Date('2026-08-05T09:30:00.000Z'),
-    new Date('2026-08-20T11:00:00.000Z'),
-    new Date('2026-09-10T08:30:00.000Z'),
-  ];
+  new Date('2026-10-15T10:00:00.000Z'),
+  new Date('2026-11-05T09:30:00.000Z'),
+  new Date('2026-11-20T11:00:00.000Z'),
+  new Date('2026-12-10T08:30:00.000Z'),
+];
 
   const events = await Promise.all([
     prisma.event.create({

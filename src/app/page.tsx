@@ -38,7 +38,7 @@ export default async function HomePage() {
         Login
       </Link>
 
-      <Link href="/register" style={styles.primaryButton}>
+      <Link href="/reserve" style={styles.primaryButton}>
         Get Started
       </Link>
     </>
@@ -81,7 +81,7 @@ export default async function HomePage() {
           </p>
 
           <div style={styles.heroButtons}>
-            <Link href="/register" style={styles.heroPrimaryButton}>
+            <Link href="/reserve" style={styles.heroPrimaryButton}>
               Get Started →
             </Link>
 
@@ -261,7 +261,7 @@ export default async function HomePage() {
           smoother.
         </p>
 
-        <Link href="/register" style={styles.heroPrimaryButton}>
+        <Link href="/reserve" style={styles.heroPrimaryButton}>
           Get Started →
         </Link>
       </section>
